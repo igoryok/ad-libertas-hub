@@ -1,16 +1,13 @@
 package com.ad.libertas.hub.service;
 
 import com.ad.libertas.hub.dto.HttpRequestMessage;
-import com.ad.libertas.hub.service.receiver.MessageReceiver;
 import com.ad.libertas.hub.util.HubUtil;
 import org.apache.tomcat.util.http.fileupload.IOUtils;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.amqp.core.Message;
-import org.springframework.amqp.core.MessageProperties;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
-import org.springframework.amqp.utils.SerializationUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -18,7 +15,6 @@ import org.springframework.stereotype.Service;
 import javax.servlet.http.HttpServletRequest;
 import java.io.*;
 import java.util.*;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Service class for UserForm processing
@@ -68,12 +64,17 @@ public class HubService {
             paramNameToValue.put(paramName, paramValues);
         }
 
-        final String body;
+        String body = "{}";
         try (InputStream in = httpRequest.getInputStream();
              ByteArrayOutputStream out = new ByteArrayOutputStream()) {
             IOUtils.copy(in, out);
-            JSONObject json = new JSONObject(new String(out.toByteArray(), "utf-8"));
-            body = json.toString();
+            JSONObject json;
+            try {
+                json = new JSONObject(new String(out.toByteArray(), "utf-8"));
+                body = json.toString();
+            } catch (JSONException exc) {
+                LOGGER.error(exc.getMessage());
+            }
         }
 
         HttpRequestMessage httpRequestMessage = new HttpRequestMessage(httpRequest.getMethod(),
@@ -106,11 +107,7 @@ public class HubService {
     private void sendToRabbitMQ(HttpRequestMessage httpRequestMessage) throws InterruptedException {
         LOGGER.info("Sending to RabbitMQ following = {}", httpRequestMessage.toString());
 
-        Message message = new Message(SerializationUtils.serialize(httpRequestMessage), new MessageProperties());
-
-      //rabbitTemplate.send(queueName, message);
-
-      rabbitTemplate.convertAndSend(queueName, HubUtil.convertObjectToJsonString(httpRequestMessage));
+        rabbitTemplate.convertAndSend(queueName, HubUtil.convertObjectToJsonString(httpRequestMessage));
 
         LOGGER.info("Sending to RabbitMQ was completed");
 

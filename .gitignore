@@ -8,3 +8,4 @@ target/*
 .logs
 *.log
 *.logs
+output.txt

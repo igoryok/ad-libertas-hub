@@ -23,6 +23,11 @@ public class MessageReceiver {
 //        countDownLatch.countDown();
 //    }
 //
+//    public void receiveMsg(String body) {
+//        LOGGER.info("Message Received: \n ={}", body);
+//        countDownLatch.countDown();
+//    }
+//
 //    public CountDownLatch getCountDownLatch() {
 //        return countDownLatch;
 //    }
