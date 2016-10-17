@@ -12,9 +12,11 @@ import javax.annotation.PostConstruct;
 import java.io.IOException;
 
 /**
- * Created by ivshevchenko on 9/20/2016.
+ * Util class for converting objects
+ *
+ * @author Shevchenko Igor
+ * @since 2016-10-14
  */
-
 public class HubUtil {
     private static final Logger LOG = LoggerFactory.getLogger(HubUtil.class);
 

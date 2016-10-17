@@ -23,28 +23,30 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
  * Main class to start application
  *
  * @author  Shevchenko Igor
- * @since   2016-08-07
+ * @since   2016-10-13
  */
 @SpringBootApplication
 public class HubApplication {
     private static final Logger LOGGER = LoggerFactory.getLogger(HubApplication.class);
 
-//    @Value("${queue.name}")
-//    private String queueName;
-//
-//    @Bean
-//    Queue queue() {
-//        return new Queue(queueName, false);
-//    }
-//    @Bean
-//    TopicExchange exchange() {
-//        return new TopicExchange("exchange");
-//    }
-//    @Bean
-//    Binding binding(Queue queue, TopicExchange exchange) {
-//        return BindingBuilder.bind(queue).to(exchange).with(queueName);
-//    }
-//
+    @Value("${queue.name}")
+    private String queueName;
+
+    @Bean
+    Queue queue() {
+        return new Queue(queueName);
+    }
+    @Bean
+    TopicExchange exchange() {
+        return new TopicExchange("exchange");
+    }
+    @Bean
+    Binding binding(Queue queue, TopicExchange exchange) {
+        return BindingBuilder.bind(queue).to(exchange).with(queueName);
+    }
+
+    // This is required for Test reasons
+
 //    @Bean
 //    SimpleMessageListenerContainer container(ConnectionFactory connectionFactory, MessageListenerAdapter listenerAdapter) {
 //        SimpleMessageListenerContainer container = new SimpleMessageListenerContainer();
